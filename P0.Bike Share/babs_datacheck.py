@@ -36,17 +36,17 @@ def question_3(data):
                                        153,   65,   55,   45,   42,   29],
                           'weekday': [4712, 4493, 4370, 3860, 3637, 3138, 3135]}
 
-    for column in expected_time_vals.keys():
+    for column in expected_time_vals:
         col_data = data[column].value_counts().values
         n_values = len(col_data)
         n_values_expected = len(expected_time_vals[column])
-        if not n_values == n_values_expected:
-            print("Wrong number of unique values found for column: {}".format(column))
+        if n_values != n_values_expected:
+            print(f"Wrong number of unique values found for column: {column}")
             print("  {:d} unique values expected; {:d} values found.".format(n_values_expected, n_values))
         elif not np.array_equal(col_data, expected_time_vals[column]):
             expected_max = expected_time_vals[column][0]
             expected_min = expected_time_vals[column][-1]
-            print("Unexpected count of values for column: {}".format(column))
+            print(f"Unexpected count of values for column: {column}")
             print("  Most common value expected {:d} data points; {:d} trips found.".format(expected_max, col_data[0]))
             print("  Least common value expected {:d} data points; {:d} trips found.".format(expected_min, col_data[-1]))
         else:

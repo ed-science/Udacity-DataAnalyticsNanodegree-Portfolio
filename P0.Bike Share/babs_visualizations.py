@@ -17,10 +17,13 @@ def filter_data(data, condition):
     # Only want to split on first two spaces separating field from operator and
     # operator from value: spaces within value should be retained.
     field, op, value = condition.split(" ", 2)
-    
+
     # check if field is valid
-    if field not in data.columns.values :
-        raise Exception("'{}' is not a feature of the dataframe. Did you spell something wrong?".format(field))
+    if field not in data.columns.values:
+        raise Exception(
+            f"'{field}' is not a feature of the dataframe. Did you spell something wrong?"
+        )
+
 
     # convert value into number or strip excess quotes if string
     try:
@@ -43,7 +46,7 @@ def filter_data(data, condition):
         matches = data[field] != value
     else: # catch invalid operation codes
         raise Exception("Invalid comparison operator. Only >, <, >=, <=, ==, != allowed.")
-    
+
     # filter data and outcomes
     data = data[matches].reset_index(drop = True)
     return data
@@ -99,8 +102,11 @@ def usage_plot(data, key = '', filters = [], **kwargs):
     # Check that the key exists
     if not key:
         raise Exception("No key has been provided. Make sure you provide a variable on which to plot the data.")
-    if key not in data.columns.values :
-        raise Exception("'{}' is not a feature of the dataframe. Did you spell something wrong?".format(key))
+    if key not in data.columns.values:
+        raise Exception(
+            f"'{key}' is not a feature of the dataframe. Did you spell something wrong?"
+        )
+
 
     # Apply filters to data
     for condition in filters:
@@ -112,25 +118,25 @@ def usage_plot(data, key = '', filters = [], **kwargs):
     if isinstance(data[key][0] , str): # Categorical features
         # For strings, collect unique strings and then count number of
         # outcomes for survival and non-survival.
-        
+
         # Summarize dataframe to get counts in each group
         data['count'] = 1
         data = data.groupby(key, as_index = False).count()
-        
+
         levels = data[key].unique()
         n_levels = len(levels)
         bar_width = 0.8
-        
+
         for i in range(n_levels):
             trips_bar = plt.bar(i - bar_width/2, data.loc[i]['count'], width = bar_width)
-        
+
         # add labels to ticks for each group of bars.
         plt.xticks(range(n_levels), levels)
-        
+
     else: # Numeric features
         # For numbers, divide the range of data into bins and count
         # number of outcomes for survival and non-survival in each bin.
-        
+
         # Set up bin boundaries for plotting
         if kwargs and 'n_bins' in kwargs and 'bin_width' in kwargs:
             raise Exception("Arguments 'n_bins' and 'bin_width' cannot be used simultaneously.")
@@ -147,7 +153,7 @@ def usage_plot(data, key = '', filters = [], **kwargs):
         elif kwargs and 'bin_width' in kwargs:
             bin_width = kwargs['bin_width']
             n_bins = int(np.ceil(float(value_range) / bin_width))
-        
+
         if kwargs and 'boundary' in kwargs:
             bound_factor = np.floor(( min_value - kwargs['boundary'] ) / bin_width)
             min_value = kwargs['boundary'] + bound_factor * bin_width
@@ -155,7 +161,7 @@ def usage_plot(data, key = '', filters = [], **kwargs):
                 n_bins += 1
 
         bins = [i*bin_width + min_value for i in range(n_bins+1)]
-        
+
         # plot the data
         plt.hist(data[key], bins = bins)
 
